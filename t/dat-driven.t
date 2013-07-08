@@ -14,9 +14,10 @@ use Ledger::Parser;
 
 my $ledgerp = Ledger::Parser->new;
 
+my $j;
+
 sub test_parse {
     my %args = @_;
-    my $j;
 
     ### test parsing ###
     eval {
@@ -33,7 +34,23 @@ sub test_parse {
             return;
         };
     }
+	
+	done_testing() if $eval_err;
+}
 
+sub test_meta_istructions {
+	#read comments from data file and extract testing instructions from there 
+	#
+	for my $entry  (@{$j->entries}) {
+		next if !$entry->isa('Ledger::Comment');	
+			my $comment = $entry->as_string;
+	}
+
+
+}
+
+
+{
     ### test number of transactions ###
     if (defined $args{num_tx}) {
         is(scalar(@{$j->transactions}), $args{num_tx}, "num_tx");
@@ -45,9 +62,10 @@ sub test_parse {
 }
 
 my $ledger1 = read_file("$Bin/ledger1.dat");
-test_parse
-    ledger=>$ledger1,
-    num_tx => 4,
+test_parse (ledger=>$ledger1);
+
+{
+		  #num_tx => 4;
     posttest => sub {
         my ($j) = @_;
         my $txs = $j->transactions;
@@ -65,6 +83,8 @@ test_parse
 
         # XXX test post comment
     };
+}
+
 
 done_testing();
 
@@ -73,8 +93,9 @@ done_testing();
 
 =head1 OVERALL DESIGN
 
-Data source contains scenario for testing. A data source file shall contain, apart from legible
-entries, comments with meta instructions to modify behavior of this test. 
+Data source contains scenario for testing. A data source file shall contain,
+apart from legibleentries, comments with meta instructions to modify 
+behavior of this test. 
 
 =head1 META INSTRUCTIONS
 
