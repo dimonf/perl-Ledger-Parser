@@ -1,6 +1,6 @@
 package Ledger::Comment;
 BEGIN {
-  $Ledger::Comment::VERSION = '0.03';
+  $Ledger::Comment::VERSION = '0.10';
 }
 
 use 5.010;
@@ -9,17 +9,25 @@ use Moo;
 
 # VERSION
 
-has linerefs => (is => 'rw');
-has parent   => (is => 'rw');
+has line_start => (is => 'rw');
+has line_end => (is => 'rw');
+has parent   => (is => 'rw'); 
 
 sub BUILD {
-  my ($self, @args) = @_;
-  ($self->parent, $self->line_start, $self->line_end) = @args;
+  my ($self, $args) = @_;
+ 	$self->journal = $args->{journal};
+	$self->parent = $args->{parent};
+	$self->line_start = $args->{line_start};
+	$self->line_end = $args->{line_end};
+	#($self->parent, $self->line_start, $self->line_end) = @args;
 }
 
 sub as_string {
     my ($self) = @_;
-    join "", map { $$_ } @{$self->linerefs};
+
+    join "",  @{$self->jourinal->get_raw_lines(
+	 	line_start => $self->line_start,
+		line_end => $self->line_end)};
 }
 
 1;
@@ -42,11 +50,18 @@ version 0.03
 
 =head1 ATTRIBUTES
 
+=head2 journal => OBJ
+
+Pointer to L<Ledger::Journal> object
+
 =head2 parent => OBJ
 
-Pointer to L<Ledger::Journal> or L<Ledger::Transaction> object.
+Pointer to  L<Ledger::Transaction> object. May be undef if comment is not
+within a transaction
 
-=head2 linerefs => [REF TO STR, ...]
+=head2 line_start => integer
+
+=head2 line_end => integer
 
 =head1 METHODS
 

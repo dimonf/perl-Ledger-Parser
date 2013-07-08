@@ -113,7 +113,7 @@ sub _parse {
             my $le = $i;
             $log->tracef("Collected comment lines: %s", [@{$rl}[$ls..$le]]);
             my $c = Ledger::Comment->new(
-                    parent => $self, line_start => $ls, line_end => $le);
+                    journal => $self, line_start => $ls, line_end => $le);
             push @{$self->entries}, $c;
 
         } elsif (defined $+{tx}) {
@@ -148,7 +148,8 @@ sub _parse {
                     my $le = $i;
                     $log->tracef("Found comment in tx: %s", @{$rl}[$ls..$le]);
                     my $c = Ledger::Comment->new(
-                        parent => $tx, linerefs => [map {\$rl->[$_]} $ls..$le]);
+                        journal => $self, parent => $tx, 
+								line_start => $ls, line_end => $le);
                     push @{$tx->entries}, $c;
 
                 } elsif ($+{posting}) {
@@ -236,6 +237,13 @@ sub accounts {
 sub add_transaction {
     my ($self, $tx) = @_;
     push @{$self->{entries}}, $tx;
+}
+
+sub get_raw_lines {
+	my ($self, $args) = @_;
+	return [$self->raw_lines[$args->{line_start}]] if !$args->{line_end};
+	return [$self->raw_lines[$args->{line_start} ..
+		$args->{line_end}]];
 }
 
 1;
