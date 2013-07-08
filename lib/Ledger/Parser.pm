@@ -1,4 +1,7 @@
 package Ledger::Parser;
+BEGIN {
+  $Ledger::Parser::VERSION = '0.03';
+}
 
 use 5.010;
 use Moo;
@@ -41,7 +44,17 @@ sub parse_file {
 
 1;
 # ABSTRACT: Parse Ledger journals
-__END__
+
+
+=pod
+
+=head1 NAME
+
+Ledger::Parser - Parse Ledger journals
+
+=head1 VERSION
+
+version 0.03
 
 =head1 SYNOPSIS
 
@@ -77,7 +90,6 @@ __END__
  # get all the mentioned accounts
  my $accts = $journal->get_accounts;
 
-
 =head1 DESCRIPTION
 
 This module parses Ledger journal into Perl document object. See
@@ -88,9 +100,7 @@ This module uses L<Log::Any> logging framework.
 
 This module uses L<Moo> object system.
 
-
 =head1 ATTRIBUTES
-
 
 =head1 METHODS
 
@@ -114,7 +124,6 @@ of L<Ledger::Posting> objects.
 
 Just like parse(), but will load document from file instead.
 
-
 =head1 FAQ
 
 =head2 Why? Ledger is already a command-line program. It even has 'lisp' output.
@@ -125,4 +134,19 @@ mainly to insert/delete/edit transactions to journal file, e.g. for
 programatically reconciling journal with internet banking statement, or for
 shortcuts (see L<App::LedgerUtils> for example).
 
+=head1 AUTHOR
+
+Steven Haryanto <stevenharyanto@gmail.com>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2011 by Steven Haryanto.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
 =cut
+
+
+__END__
+

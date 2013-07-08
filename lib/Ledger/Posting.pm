@@ -1,4 +1,7 @@
 package Ledger::Posting;
+BEGIN {
+  $Ledger::Posting::VERSION = '0.03';
+}
 
 use 5.010;
 use Ledger::Util;
@@ -62,13 +65,21 @@ sub seq {
 
 1;
 # ABSTRACT: Represent a Ledger posting in a transaction
-__END__
+
+
+=pod
+
+=head1 NAME
+
+Ledger::Posting - Represent a Ledger posting in a transaction
+
+=head1 VERSION
+
+version 0.03
 
 =head1 SYNOPSIS
 
-
 =head1 DESCRIPTION
-
 
 =head1 ATTRIBUTES
 
@@ -84,7 +95,6 @@ Pointer to transaction object.
 
 =head2 lineref => REF TO STR
 
-
 =head1 METHODS
 
 =for Pod::Coverage BUILD
@@ -98,4 +108,19 @@ on).
 
 =head2 $p->as_string()
 
+=head1 AUTHOR
+
+Steven Haryanto <stevenharyanto@gmail.com>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2011 by Steven Haryanto.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
 =cut
+
+
+__END__
+

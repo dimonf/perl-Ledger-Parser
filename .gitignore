@@ -1,3 +1,5 @@
 Ledger-Parser-*
 .build
 *~
+*.swp
+tmp.*

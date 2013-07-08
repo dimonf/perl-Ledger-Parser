@@ -1,4 +1,7 @@
 package Ledger::Journal;
+BEGIN {
+  $Ledger::Journal::VERSION = '0.03';
+}
 
 use 5.010;
 use locale;
@@ -24,20 +27,20 @@ my $re_line      = qr/^(?:(?<tx>\d)|
                           (?<pricing>P)|
                           (?<comment>.?))/x;
 my $re_tx        = qr/^(?<date>$re_date)
-                      (\s+\((?<seq>\d+)\))?
+                      (\s+\((?<seq>\d+)\))? #TODO: shall we put ?: in the opening bracket? - (?:\s ...
                       (?:\s+(?<desc>.+?)
-                          (?:\s\s+;(?<comment>.*))?)?/x;
-my $re_idcomment = qr/^\s+;/x;
-my $re_identline = qr/^\s+(?:(?<comment>;)|(?<posting>.?))/x;
-my $re_posting   = qr/^\s+(?<acc>$re_account)
-                      (?:\s{2,}(?<amount>$re_amount))?
-                      \s*(?:;(?<comment>.*))?$/x;
+                          (?:\s\s+;(?<comment>.*))?)?/x; #TODO amend: \s\s+ -> \s{2,}
 my $re_pricing   = qr/^P\s+
                       (?<date>$re_date) \s+
                       (?<cmdity1>$re_cmdity) \s+
                       (?<n>$re_number) \s+
                       (?<cmdity2>$re_cmdity)
-                      (?:\s;(?<comment>.*))?\s*$/x;
+                      (?:\s;(?<comment>.*))?\s*$/x; #TODO: extract <comment> from re_pricing, re_posting and re_tx
+my $re_idcomment = qr/^\s+;/x; #TODO: combine with $UTIL::re_comment
+my $re_identline = qr/^\s+(?:(?<comment>;)|(?<posting>.?))/x;
+my $re_posting   = qr/^\s+(?<acc>$re_account)
+                      (?:\s{2,}(?<amount>$re_amount))?
+                      \s*(?:;(?<comment>.*))?$/x;
 
 sub BUILD {
     my ($self, $args) = @_;
@@ -85,7 +88,7 @@ sub _add_tx {
 sub _parse {
     my ($self) = @_;
     $log->tracef('-> _parse()');
-    my $t0 = [gettimeofday];
+    my $t0 = [gettimeofday]; #TODO: remove profiling functionality to tests scripts
 
     my $rl = $self->raw_lines;
     my $ll = Array::Iterator->new($rl);
@@ -237,13 +240,21 @@ sub add_transaction {
 
 1;
 # ABSTRACT: Represent an Org document
-__END__
+
+
+=pod
+
+=head1 NAME
+
+Ledger::Journal - Represent an Org document
+
+=head1 VERSION
+
+version 0.03
 
 =head1 SYNOPSIS
 
-
 =head1 DESCRIPTION
-
 
 =head1 ATTRIBUTES
 
@@ -254,7 +265,6 @@ Store the raw source lines.
 =head2 entries => ARRAY
 
 Transactions, pricing, and top-level entities.
-
 
 =head1 METHODS
 
@@ -275,9 +285,23 @@ Return all accounts that are mentioned.
 
 =head2 $journal->add_transaction($tx)
 
-
 =head1 SEE ALSO
 
 L<Ledger::Transaction>
 
+=head1 AUTHOR
+
+Steven Haryanto <stevenharyanto@gmail.com>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2011 by Steven Haryanto.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
 =cut
+
+
+__END__
+

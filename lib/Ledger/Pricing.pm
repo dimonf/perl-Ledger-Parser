@@ -1,4 +1,7 @@
 package Ledger::Pricing;
+BEGIN {
+  $Ledger::Pricing::VERSION = '0.03';
+}
 
 use 5.010;
 use DateTime;
@@ -44,12 +47,19 @@ sub as_string {
 
 1;
 # ABSTRACT: Represent a Ledger pricing line
-__END__
 
-=for Pod::Coverage BUILD
+
+=pod
+
+=head1 NAME
+
+Ledger::Pricing - Represent a Ledger pricing line
+
+=head1 VERSION
+
+version 0.03
 
 =head1 SYNOPSIS
-
 
 =head1 DESCRIPTION
 
@@ -61,6 +71,7 @@ It asserts that commodity cmdity2 has a price of N cmdity2. Example:
 
  P 2011/10/17 USD 8500 IDR ; 1 US$ = 8500 Rp
 
+=for Pod::Coverage BUILD
 
 =head1 ATTRIBUTES
 
@@ -80,11 +91,25 @@ It asserts that commodity cmdity2 has a price of N cmdity2. Example:
 
 Pointer to L<Ledger::Journal> object.
 
-
 =head1 METHODS
 
 =head2 new(...)
 
 =head2 $tx->as_string()
 
+=head1 AUTHOR
+
+Steven Haryanto <stevenharyanto@gmail.com>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2011 by Steven Haryanto.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
 =cut
+
+
+__END__
+

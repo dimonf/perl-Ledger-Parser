@@ -1,4 +1,7 @@
 package Ledger::Util;
+BEGIN {
+  $Ledger::Util::VERSION = '0.03';
+}
 
 use 5.010;
 use strict;
@@ -12,7 +15,7 @@ our @EXPORT_OK = qw(parse_number);
 
 our $reset_lineref_sub = sub { $_[0]->lineref(undef) };
 
-our $re_comment   = qr/^(\s*;|[^0-9P]|\s*$)/x;
+our $re_comment   = qr/^(\s*;|[^0-9P]|\s*$)/x; #TODO: discard empty lines?  combine with $JOURNAL::re_idcomment?  leave only \s*; (probably \s*[;#]) ?
 our $re_cmdity    = qr/(?:[A-Za-z_]\w+|\$)/x; # XXX add other currency symbols
 my  $re_dsep      = qr![/-]!;
 our $re_date      = qr/(?:
@@ -26,12 +29,14 @@ our $re_amount    = qr/(?:
                            (?:(?<number>$re_number)\s*(?<cmdity>$re_cmdity))|
                            (?:(?<number>$re_number))
                        )/x;
+  ###
 our $re_accpart   = qr/(?:(
                               (?:[^:\s]+[ \t][^:\s]*)|
                               [^:\s]+
                       ))+/x; # don't allow double space
 our $re_account0  = qr/(?:$re_accpart(?::$re_accpart)*)/x;
 our $re_account   = qr/(?<acc>$re_account0|\($re_account0\)|\[$re_account0\])/x;
+  ###
 
 sub parse_number {
     my $num = shift;
@@ -74,3 +79,28 @@ sub format_amount {
 }
 
 1;
+
+__END__
+=pod
+
+=head1 NAME
+
+Ledger::Util
+
+=head1 VERSION
+
+version 0.03
+
+=head1 AUTHOR
+
+Steven Haryanto <stevenharyanto@gmail.com>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2011 by Steven Haryanto.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
+

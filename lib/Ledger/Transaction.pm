@@ -1,4 +1,7 @@
 package Ledger::Transaction;
+BEGIN {
+  $Ledger::Transaction::VERSION = '0.03';
+}
 
 use 5.010;
 use DateTime;
@@ -121,15 +124,23 @@ sub check {
 
 1;
 # ABSTRACT: Represent a Ledger transaction
-__END__
 
-=for Pod::Coverage BUILD
+
+=pod
+
+=head1 NAME
+
+Ledger::Transaction - Represent a Ledger transaction
+
+=head1 VERSION
+
+version 0.03
 
 =head1 SYNOPSIS
 
-
 =head1 DESCRIPTION
 
+=for Pod::Coverage BUILD
 
 =head1 ATTRIBUTES
 
@@ -151,7 +162,6 @@ Array of L<Ledger::Posting> or L<Ledger::Comment>
 
 Pointer to L<Ledger::Journal> object.
 
-
 =head1 METHODS
 
 =head2 new(...)
@@ -171,4 +181,19 @@ Return true if transaction is balanced, or false if otherwise.
 
 =head2 $tx->postings()
 
+=head1 AUTHOR
+
+Steven Haryanto <stevenharyanto@gmail.com>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2011 by Steven Haryanto.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
 =cut
+
+
+__END__
+
