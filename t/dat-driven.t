@@ -3,7 +3,7 @@
 use 5.010;
 use strict;
 use warnings;
-use File::Slurp;
+#use File::Slurp;
 use Test::More 0.96;
 use FindBin qw($Bin);
 
@@ -13,6 +13,7 @@ use Ledger::Parser;
 
 
 my $ledgerp = Ledger::Parser->new;
+my $dat_file = "$Bin/data-driven.dat";
 
 my $j;
 
@@ -21,7 +22,8 @@ sub test_parse {
 
     ### test parsing ###
     eval {
-        $j = $ledgerp->parse($args{ledger});
+			$j = $ledgerp->parse_file($args{ledger});
+			#$j = $ledgerp->parse($args{ledger});
     };
 
     my $eval_err = $@;
@@ -46,44 +48,20 @@ sub test_meta_istructions {
 			my $comment = $entry->as_string;
 	}
 
-
 }
 
 
 {
     ### test number of transactions ###
+	 my %args=@_;
     if (defined $args{num_tx}) {
         is(scalar(@{$j->transactions}), $args{num_tx}, "num_tx");
     }
 
-    if ($args{posttest}) {
-        $args{posttest}->($j);
-    }
-}
+};
 
-my $ledger1 = read_file("$Bin/ledger1.dat");
-test_parse (ledger=>$ledger1);
-
-{
-		  #num_tx => 4;
-    posttest => sub {
-        my ($j) = @_;
-        my $txs = $j->transactions;
-
-        is(ref($txs), 'ARRAY', 'transactions() returns array');
-
-        my $tx0 = $txs->[0];
-
-        is_deeply($tx0->balance, [], 'balance()');
-
-        ok($tx0->is_balanced, 'is_balanced()');
-
-        # XXX test tx1 comment, tx2 comment
-
-
-        # XXX test post comment
-    };
-}
+#my $ledger1 = read_file("$Bin/ledger1.dat");
+test_parse (ledger=>$dat_file);
 
 
 done_testing();
