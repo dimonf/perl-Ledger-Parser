@@ -26,21 +26,25 @@ has _lineno   => (is => 'rw'); # idem
 my $re_line      = qr/^(?:(?<tx>\d)|
                           (?<pricing>P)|
                           (?<comment>.?))/x;
+#NEXT TODO: - shall we put ?: in the opening bracket? - (?:\s ... 
+#- amend: \s\s+ -> \s{2,}
 my $re_tx        = qr/^(?<date>$re_date)
-                      (\s+\((?<seq>\d+)\))? #TODO: shall we put ?: in the opening bracket? - (?:\s ...
+                      (\s+\((?<seq>\d+)\))?
                       (?:\s+(?<desc>.+?)
-                          (?:\s\s+;(?<comment>.*))?)?/x; #TODO amend: \s\s+ -> \s{2,}
+                          (?:\s\s+;(?<comment>.*))?)?/x;
+		 #NEXT TODO: combine with $UTIL::re_comment
+my $re_idcomment = qr/^\s+;/x;
+my $re_identline = qr/^\s+(?:(?<comment>;)|(?<posting>.?))/x;
+my $re_posting   = qr/^\s+(?<acc>$re_account)
+                      (?:\s{2,}(?<amount>$re_amount))?
+                      \s*(?:;(?<comment>.*))?$/x;
+# NEXT TODO: extract <comment> from re_prcing, re_posting and re_tx  
 my $re_pricing   = qr/^P\s+
                       (?<date>$re_date) \s+
                       (?<cmdity1>$re_cmdity) \s+
                       (?<n>$re_number) \s+
                       (?<cmdity2>$re_cmdity)
-                      (?:\s;(?<comment>.*))?\s*$/x; #TODO: extract <comment> from re_pricing, re_posting and re_tx
-my $re_idcomment = qr/^\s+;/x; #TODO: combine with $UTIL::re_comment
-my $re_identline = qr/^\s+(?:(?<comment>;)|(?<posting>.?))/x;
-my $re_posting   = qr/^\s+(?<acc>$re_account)
-                      (?:\s{2,}(?<amount>$re_amount))?
-                      \s*(?:;(?<comment>.*))?$/x;
+                      (?:\s;(?<comment>.*))?\s*$/x;
 
 sub BUILD {
     my ($self, $args) = @_;
@@ -88,7 +92,7 @@ sub _add_tx {
 sub _parse {
     my ($self) = @_;
     $log->tracef('-> _parse()');
-    my $t0 = [gettimeofday]; #TODO: remove profiling functionality to tests scripts
+    my $t0 = [gettimeofday]; #TODO: move profiling functionality to test script
 
     my $rl = $self->raw_lines;
     my $ll = Array::Iterator->new($rl);
@@ -148,8 +152,7 @@ sub _parse {
                     my $le = $i;
                     $log->tracef("Found comment in tx: %s", @{$rl}[$ls..$le]);
                     my $c = Ledger::Comment->new(
-                        journal => $self, parent => $tx, 
-								line_start => $ls, line_end => $le);
+                        parent => $tx, line_start=>$ls, line_end=>$le);
                     push @{$tx->entries}, $c;
 
                 } elsif ($+{posting}) {
@@ -237,13 +240,6 @@ sub accounts {
 sub add_transaction {
     my ($self, $tx) = @_;
     push @{$self->{entries}}, $tx;
-}
-
-sub get_raw_lines {
-	my ($self, $args) = @_;
-	return [$self->raw_lines[$args->{line_start}]] if !$args->{line_end};
-	return [$self->raw_lines[$args->{line_start} ..
-		$args->{line_end}]];
 }
 
 1;

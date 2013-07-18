@@ -9,17 +9,13 @@ use Moo;
 
 # VERSION
 
+has journal => (is => 'rw');
+has parent   => (is => 'rw'); 
 has line_start => (is => 'rw');
 has line_end => (is => 'rw');
-has parent   => (is => 'rw'); 
 
 sub BUILD {
   my ($self, $args) = @_;
- 	$self->journal = $args->{journal};
-	$self->parent = $args->{parent};
-	$self->line_start = $args->{line_start};
-	$self->line_end = $args->{line_end};
-	#($self->parent, $self->line_start, $self->line_end) = @args;
 }
 
 sub as_string {
