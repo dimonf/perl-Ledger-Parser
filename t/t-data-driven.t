@@ -1,19 +1,29 @@
-#!perl
+#!/usr/bin/perl
 
 use 5.010;
 use strict;
 use warnings;
-#use File::Slurp;
-use Test::More 0.96;
+use Test::More;
 use FindBin qw($Bin);
 
 use lib "$Bin/../lib";
+my $test_data_file = 'data-driven.dat';
 
-use Ledger::Parser;
+#use Ledger::Parser;
+
+
+BEGIN {
+	use_ok("Ledger::Parser"); 
+}
+
+can_ok("Ledger::Parser",'parse');
+can_ok("Ledger::Parser",'parse_file');
 
 
 my $ledgerp = Ledger::Parser->new;
-my $dat_file = "$Bin/data-driven.dat";
+isa_ok($ledgerp,"Ledger::Parser");
+
+ok(-r $test_data_file && -f $test_data_file,".. the data file '$test_data_file' is valid");
 
 my $j;
 
@@ -61,7 +71,7 @@ sub test_meta_istructions {
 };
 
 #my $ledger1 = read_file("$Bin/ledger1.dat");
-test_parse (ledger=>$dat_file);
+test_parse (ledger=>$test_data_file);
 
 
 done_testing();
