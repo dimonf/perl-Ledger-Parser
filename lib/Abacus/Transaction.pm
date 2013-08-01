@@ -1,4 +1,4 @@
-package Abacus::Transaction;
+package Abacus::Journal;
 
 use strict;
 use warnings;
@@ -7,15 +7,15 @@ our $VERSION = "0.1";
 
 sub new {
 	my($_class) = @_;
-	my $transaction = {};
-	bless($transaction, $_class);
-	$transaction->_init();
-	return $transaction;
+	my $journal = {};
+	bless($journal, $_class);
+	$journal->_init();
+	return $journal;
 }
 
 sub _init {
 	my ($self) = @_;
-	$self->{entries}=[];
+	$self->{tr}=[];
 }
 
 sub add_comment {

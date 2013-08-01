@@ -1,0 +1,15 @@
+digraph G {
+	rankdir=TD;
+	node [shape=record];
+	ent [label="ent"];
+	tr [label="tr"];
+	ent_type [label="Abacus::Entry"];
+	tr_type [label="Abacus::Transaction"];
+	ent_1 [label=<<TABLE BORDER="0" CELLBORDER="1" CELLPADDING="0" CELLSPACING="0">
+		<TR><TD>account</TD><TD>exp:admin:rent</TD></TR>
+		<TR><TD>amount</TD><TD>241.23</TD></TR>
+		</TABLE>>];
+	a [label = "<f0> foo | x | <f1> bar"];
+	b [label = "{a | {<f0> foo | x | <f1> bar } | b | c}"];
+	a:f0 -> b:f1 ;
+}

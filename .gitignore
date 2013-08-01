@@ -4,3 +4,4 @@ Ledger-Parser-*
 *.swp
 tmp.*
 .tmp.*
+*pdf
