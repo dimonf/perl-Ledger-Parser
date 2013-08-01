@@ -29,15 +29,18 @@ sub add_transaction {
 	my ($self, $par);
 	($self, %$par) = @_;
 	my $tr = {};
-	$tr->{date} = $par->{date};
-	$tr->{date} = $par->{date};
-	$tr->{narrative} = $par->{narrative};
-	$tr->{comment} = $par->{comment};
-	$tr->{status} = $par->{status};
+  for my $key (qw(date narrative comment status)) {
+    $tr->{$key} = $par->{$key};
+  }
 	$tr;
 }
 
 sub add_posting {
+  my ($self, $par);
+  ($self, %$par) = @_;
+  for my $key (qw//) {
+     $par->{
+  }
 }
 
 sub add_rate {
@@ -61,9 +64,6 @@ Abacus::Journal - data structure, representing book entries.
   use Abacus::Journal;
 
   my $j = Abacus::Journal->new();
-
-  $j
-  #
 
 =head1 DESCRIPTION
 

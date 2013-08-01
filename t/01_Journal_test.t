@@ -27,3 +27,10 @@ my $tr = $journal->add_transaction(
 
 is(ref $tr, 'HASH', 'method add_transaction returns reference to hash');
 
+$journal->add_posting(
+  transaction => $tr,
+  account => 'a:bb:02',
+  amount => 243.21,
+  curr => 'EUR',
+  amount_b => 301.12,
+  curr_b => 'USD');
