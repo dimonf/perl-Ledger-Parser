@@ -46,6 +46,27 @@ my $ent_3 =
 		tr => $tr_1
 		};
 
+my $rates_EUR_USD_dates = [
+					'2012-12-03',
+					'2012-12-15',
+					'2013-01-07',
+					'2013-01-23'
+		 		];
+my $rates_EUR_USD_rates =  {
+					'2012-12-03' => {d=>1.253, r=>0.798, dr=>1, rr=>0, ds=>$ent_2, rs=>241},
+					'2012-12-15' => {d=>1.233, r=>0.728, dr=>1, rr=>0, ds=>$ent_1, rs=>124},
+					'2013-01-07' => {d=>1.213, r=>0.801, dr=>0, rr=>0, ds=>89, rs=>141},
+					'2013-01-23' => {d=>1.209, r=>0.829, dr=>1, rr=>0, ds=>$ent_3, rs=>159},
+				};
+
+my $rates = {
+		EUR => {
+			USD => {
+				dates => $rates_EUR_USD_dates,
+				rates => $rates_EUR_USD_rates,
+			},
+	 	},
+};
 
 
 my $transactions = [$tr_1];
@@ -59,10 +80,12 @@ bless($entities,'Abacus::Entry');
 
 my $journal = {
 #	tr => [$transactions],
-	ent => [$entities] 
+	ent => $entities 
 };
 
 my $gvds = GraphViz::Data::Structure->new($journal, Orientation => 'vertical',
 shape=>'box');
+$gvds->add($rates);
+
 print $gvds->graph()->as_png('out.png');
 
