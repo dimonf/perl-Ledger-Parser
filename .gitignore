@@ -5,3 +5,5 @@ Ledger-Parser-*
 tmp.*
 .tmp.*
 *pdf
+*png
+*jpg
