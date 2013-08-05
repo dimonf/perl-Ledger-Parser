@@ -1,21 +1,23 @@
-package Abacus::Transaction;
+package Abacus::Journal;
 
 use strict;
 use warnings;
+use Data::Dumper;
 
 our $VERSION = "0.1";
 
 sub new {
 	my($_class) = @_;
-	my $transaction = {};
-	bless($transaction, $_class);
-	$transaction->_init();
-	return $transaction;
+	my $journal= {};
+	bless($journal, $_class);
+	$journal->_init();
+	return $journal;
 }
 
 sub _init {
 	my ($self) = @_;
-	$self->{entries}=[];
+	$self->{ent} = [];
+	$self->{cur_tr} = '';
 }
 
 sub add_comment {
@@ -24,23 +26,34 @@ sub add_comment {
 	$self->{comment} = $comment;
 }
 
-
 sub add_transaction {
+	my ($self, $par);
+	($self, $par) = @_;
+	$self->{cur_tr} = $par;
+}
+
+sub new_transaction {
 	my ($self, $par);
 	($self, %$par) = @_;
 	my $tr = {};
-  for my $key (qw(date narrative comment status)) {
+  for my $key (qw(date narrative comment status tags)) {
     $tr->{$key} = $par->{$key};
   }
-	$tr;
+  $tr->{ent} = [];
+  $self->add_transaction($tr);
 }
 
-sub add_posting {
+sub add_entry{
   my ($self, $par);
   ($self, %$par) = @_;
-  for my $key (qw//) {
-     $par->{
+  $self->{cur_tr} || die 'no current transaction to attach entry to';
+  my $ent={};
+  for my $key (qw/account amount curr amount_b curr_b comment/) {
+		$ent->{$key} = $par->{$key};
   }
+
+  push $self->{cur_tr}->{ent}, $ent; 
+  #print Dumper ($self->{cur_tr});
 }
 
 sub add_rate {
@@ -66,6 +79,11 @@ Abacus::Journal - data structure, representing book entries.
   my $j = Abacus::Journal->new();
 
 =head1 DESCRIPTION
+
+=head4 VARIABLES:
+
+$cur_tr->{}	current transaction (static). A transaction can be selected and be processed (add/read/amend records). 
+
 
 =head1 WORKING
 
