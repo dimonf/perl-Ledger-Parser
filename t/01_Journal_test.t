@@ -5,7 +5,7 @@ use strict;
 use warnings;
 
 use Test::More;
-my $entries =  {};
+my $test_entries =  {};
 use Data::Dumper;
 
 BEGIN {
@@ -13,7 +13,7 @@ BEGIN {
 }
 
 sub prepare_data {
-	$entries->{'1'} = {
+	$test_entries->{'1'} = {
 		id => '1',
 		account => 'exp:admin:rent',
 		amount => 241.23,
@@ -24,7 +24,7 @@ sub prepare_data {
 		tags => 'flat-H,ccenter:A',
 	};
 
-	$entries->{'2'} = {
+	$test_entries->{'2'} = {
 	id => '2',
 	account => 'exp:admin:rent',
 	amount => 310.10,
@@ -36,7 +36,7 @@ sub prepare_data {
 	};
 
 
-	$entries->{'3'} = {
+	$test_entries->{'3'} = {
 		id => '3',
 		account => 'exp:bank:HB',
 		amount => 14.23,
@@ -47,7 +47,7 @@ sub prepare_data {
 		tags => '',
 	};
 
-	$entries->{'4'} = {
+	$test_entries->{'4'} = {
 	id => '4',
 	account => 'ass:bank:HB',
 	amount => -565.56,
@@ -86,21 +86,15 @@ is_deeply($journal->{cur_tr}, $tr, 'reference $journal->cur_tr is valid');
 
 prepare_data;
 
-for my $key (sort keys %$entries) {
-		  print Dumper($entries->{$key});
-		  	$journal->add_entry($entries->{$key});
+for my $key (sort keys %$test_entries) {
+		  	$journal->add_entry(%{$test_entries->{$key}});
 }
 
-my $new_entries = scalar @$journal->{cur_tr}->{ent};
-is (scalar keys %$entries, $new_entries, "number of new entries $new_entries");
+my $new_entries_count = scalar @{$journal->{cur_tr}->{ent}};
+is (scalar keys %$test_entries, $new_entries_count, 
+    "number of new entries $new_entries_count");
 
 
 
 __END__
 
-$tr->add_posting(
-  account => 'a:bb:02',
-  amount => 243.21,
-  curr => 'EUR',
-  amount_b => 301.12,
-  curr_b => 'USD');

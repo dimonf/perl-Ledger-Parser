@@ -53,7 +53,6 @@ sub add_entry{
   }
 
   push $self->{cur_tr}->{ent}, $ent; 
-  #print Dumper ($self->{cur_tr});
 }
 
 sub add_rate {
