@@ -43,26 +43,51 @@ sub new_transaction {
   $self->add_transaction($tr);
 }
 
+sub validate_transaction {
+	#part of validation take place in tr_get_totals
+	my ($self) = shift;
+	my $t = $self->tr_get_totals;
+	$t->{$t->{base_curr}} == 0 || die "balance in base currency is not 0!";
+	#print Dumper ($t);
+}
+
 sub add_entry{
   my ($self, $par);
   ($self, %$par) = @_;
   $self->{cur_tr} || die 'no current transaction to attach entry to';
   my $ent={};
-  for my $key (qw/account amount curr amount_b curr_b comment/) {
+  for my $key (qw/account amount curr amount_b curr_b comment tr/) {
 		$ent->{$key} = $par->{$key};
   }
-
+	$ent->{tr} = $self->{cur_tr} if $ent->{tr};
   push $self->{cur_tr}->{ent}, $ent; 
+}
+
+sub tr_get_totals {
+	my ($self) = shift;
+	my %t;
+	for my $ent (@{$self->{cur_tr}->{ent}}) {
+			  #print Dumper ($ent);
+		$t{$ent->{curr}} += $ent->{amount};
+		$t{$ent->{curr_b}} += $ent->{amount_b};
+
+		if  (! $t{base_curr} ) {
+			$t{base_curr} = $ent->{curr_b} if $ent->{curr_b};
+		} elsif ($ent->{curr_b}) {
+			#validation: there must be only one base currency throughout a transaction
+			$t{base_curr} eq $ent->{curr_b} || die 'more than one base currency in use'
+		}
+		for my $k (keys %t) {
+			$k eq 'base_curr' || ($t{$k} = sprintf "%.2f", $t{$k});
+		}
+
+	}	  
+	\%t;
 }
 
 sub add_rate {
 }
 
-sub validate_transaction {
-	my ($self, $tr) = @_;
-	(ref $tr eq 'HASH') || die "transaction must be a reference to hash";
-	push ($self->{tr}, $tr);
-}
 
 1;
 __END__

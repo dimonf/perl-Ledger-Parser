@@ -66,6 +66,7 @@ can_ok("Abacus::Journal","add_transaction");
 can_ok("Abacus::Journal","add_entry");
 can_ok("Abacus::Journal","add_rate");
 can_ok("Abacus::Journal","validate_transaction");
+can_ok("Abacus::Journal","tr_get_totals");
 
 my $journal = Abacus::Journal->new();
 
@@ -94,7 +95,7 @@ my $new_entries_count = scalar @{$journal->{cur_tr}->{ent}};
 is (scalar keys %$test_entries, $new_entries_count, 
     "number of new entries $new_entries_count");
 
-
+$journal->validate_transaction;
 
 __END__
 
