@@ -97,5 +97,7 @@ is (scalar keys %$test_entries, $new_entries_count,
 
 $journal->validate_transaction;
 
+
+
 __END__
 

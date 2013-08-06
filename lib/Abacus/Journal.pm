@@ -26,12 +26,6 @@ sub add_comment {
 	$self->{comment} = $comment;
 }
 
-sub add_transaction {
-	my ($self, $par);
-	($self, $par) = @_;
-	$self->{cur_tr} = $par;
-}
-
 sub new_transaction {
 	my ($self, $par);
 	($self, %$par) = @_;
@@ -43,12 +37,10 @@ sub new_transaction {
   $self->add_transaction($tr);
 }
 
-sub validate_transaction {
-	#part of validation take place in tr_get_totals
-	my ($self) = shift;
-	my $t = $self->tr_get_totals;
-	$t->{$t->{base_curr}} == 0 || die "balance in base currency is not 0!";
-	#print Dumper ($t);
+sub add_transaction {
+	my ($self, $par);
+	($self, $par) = @_;
+	$self->{cur_tr} = $par;
 }
 
 sub add_entry{
@@ -59,8 +51,17 @@ sub add_entry{
   for my $key (qw/account amount curr amount_b curr_b comment tr/) {
 		$ent->{$key} = $par->{$key};
   }
-	$ent->{tr} = $self->{cur_tr} if $ent->{tr};
+	$ent->{tr} = $self->{cur_tr} unless $ent->{tr};
   push $self->{cur_tr}->{ent}, $ent; 
+}
+
+sub validate_transaction {
+	#part of validation take place in tr_get_totals
+  my ($self, $par);
+	($self,%$par) = shift;
+	my $t = $self->tr_get_totals;
+	$t->{$t->{base_curr}} == 0 || die "balance in base currency is not 0!";
+  push (@{$self->{ent}}, @{$self->{cur_tr}->{ent}}) if $par->{post}
 }
 
 sub tr_get_totals {
@@ -84,6 +85,13 @@ sub tr_get_totals {
 	}	  
 	\%t;
 }
+
+sub print_journal {
+  my ($self) = @_;
+  for my $tr ($self->{ent}) {
+  }
+}
+
 
 sub add_rate {
 }
