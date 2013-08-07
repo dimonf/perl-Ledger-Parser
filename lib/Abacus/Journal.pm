@@ -58,10 +58,10 @@ sub add_entry{
 sub validate_transaction {
 	#part of validation take place in tr_get_totals
   my ($self, $par);
-	($self,%$par) = shift;
+	($self,%$par) = @_;
 	my $t = $self->tr_get_totals;
 	$t->{$t->{base_curr}} == 0 || die "balance in base currency is not 0!";
-  push (@{$self->{ent}}, @{$self->{cur_tr}->{ent}}) if $par->{post}
+   push (@{$self->{ent}}, @{$self->{cur_tr}->{ent}}) if $par->{post}
 }
 
 sub tr_get_totals {
@@ -88,7 +88,7 @@ sub tr_get_totals {
 
 sub print_journal {
   my ($self) = @_;
-  for my $tr ($self->{ent}) {
+  for my $ent ($self->{ent}) {
   }
 }
 

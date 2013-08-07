@@ -95,8 +95,16 @@ my $new_entries_count = scalar @{$journal->{cur_tr}->{ent}};
 is (scalar keys %$test_entries, $new_entries_count, 
     "number of new entries $new_entries_count");
 
+my $old_entries_count = scalar @{$journal->{ent}};
 $journal->validate_transaction;
+is (scalar @{$journal->{ent}}, $old_entries_count,
+		  "number of journal's entries didn't change");
 
+my $old_entries_count = scalar @{$journal->{ent}};
+$journal->validate_transaction(post => 'yep');
+
+is (@{$journal->{ent}} - $old_entries_count, $new_entries_count,
+		  "number of journal's entries increased by $new_entries_count");
 
 
 __END__
