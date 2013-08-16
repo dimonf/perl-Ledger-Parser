@@ -74,6 +74,7 @@ my $tr_number_before = scalar $journal->{ent};
 
 my $tr = $journal->new_transaction(
 	date => '2013-05-11',
+  id => 'A01-0012',
 	narrative => 'rent payment for May',
 	comment => 'will repeat monthly',
 	status => 'posted',
@@ -88,7 +89,7 @@ is_deeply($journal->{cur_tr}, $tr, 'reference $journal->cur_tr is valid');
 prepare_data;
 
 for my $key (sort keys %$test_entries) {
-		  	$journal->add_entry(%{$test_entries->{$key}});
+		  	$journal->add_entry($test_entries->{$key});
 }
 
 my $new_entries_count = scalar @{$journal->{cur_tr}->{ent}};
@@ -97,15 +98,19 @@ is (scalar keys %$test_entries, $new_entries_count,
 
 my $old_entries_count = scalar @{$journal->{ent}};
 $journal->validate_transaction;
+
 is (scalar @{$journal->{ent}}, $old_entries_count,
 		  "number of journal's entries didn't change");
 
-my $old_entries_count = scalar @{$journal->{ent}};
+$old_entries_count = scalar @{$journal->{ent}};
 $journal->validate_transaction(post => 'yep');
+print "working\n",Dumper($journal->{ent});
 
 is (@{$journal->{ent}} - $old_entries_count, $new_entries_count,
 		  "number of journal's entries increased by $new_entries_count");
 
+
+$journal->print_journal; 
 
 __END__
 

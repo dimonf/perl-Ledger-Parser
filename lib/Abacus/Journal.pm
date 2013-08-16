@@ -5,6 +5,7 @@ use warnings;
 use Data::Dumper;
 
 our $VERSION = "0.1";
+our $int_ind = 0; 
 
 sub new {
 	my($_class) = @_;
@@ -30,10 +31,11 @@ sub new_transaction {
 	my ($self, $par);
 	($self, %$par) = @_;
 	my $tr = {};
-  for my $key (qw(date narrative comment status tags)) {
+  for my $key (qw(date id narrative comment status tags)) {
     $tr->{$key} = $par->{$key};
   }
-  $tr->{ent} = [];
+  $tr->{int_ind} = ++$int_ind;
+  #$tr->{ent} = [];
   $self->add_transaction($tr);
 }
 
@@ -44,27 +46,37 @@ sub add_transaction {
 }
 
 sub add_entry{
+  #adds entry to a stack $self->{curr_tr}->{ent}
+  #
   my ($self, $par);
-  ($self, %$par) = @_;
-  $self->{cur_tr} || die 'no current transaction to attach entry to';
+  ($self, $par) = @_;
   my $ent={};
+
   for my $key (qw/account amount curr amount_b curr_b comment tr/) {
 		$ent->{$key} = $par->{$key};
   }
 	$ent->{tr} = $self->{cur_tr} unless $ent->{tr};
-  push $self->{cur_tr}->{ent}, $ent; 
+  defined $ent->{tr} || die 'unable to determine transaction for an entry being added';
+
+  #print Dumper($ent);
+  push @{$self->{cur_tr}->{ent}}, $ent; 
 }
 
 sub validate_transaction {
+  # validate AND actually add ALL entries of a transaction into $self->{ent}
 	#part of validation take place in tr_get_totals
   my ($self, $par);
 	($self,%$par) = @_;
 	my $t = $self->tr_get_totals;
 	$t->{$t->{base_curr}} == 0 || die "balance in base currency is not 0!";
+  #print "working\n", Dumper($self->{cur_tr}->{ent});
    push (@{$self->{ent}}, @{$self->{cur_tr}->{ent}}) if $par->{post}
 }
 
 sub tr_get_totals {
+  #returns hash with total for each currency in transaction.
+  #adds base_curr key to indicate base currency, eg:
+  # {"USD"=>1.00, "EUR"=>0.00, base_curr=>"EUR"}
 	my ($self) = shift;
 	my %t;
 	for my $ent (@{$self->{cur_tr}->{ent}}) {
@@ -88,10 +100,30 @@ sub tr_get_totals {
 
 sub print_journal {
   my ($self) = @_;
+  my $cur_tr;
+  #print Dumper($self->{ent});
+  #die 'remove me';
+  
   for my $ent ($self->{ent}) {
+    #print Dumper($ent);
+    if ($cur_tr != $ent->{tr}) {
+        $cur_tr = $ent->{tr};
+        $self->print_tr($ent->{tr});
+    }
+    $self->print_ent($ent);
   }
 }
 
+sub print_tr {
+  my($self, %p) = @_;
+  print "\n$p{date} $p{id} $p{narrative} $p{status} $p{tags};$p{comment} ";
+}
+
+
+sub print_ent {
+  my ($self, %e) = @_;
+  print "$e{id} $e{account} $e{curr} $e{amount} $e{curr_b} $e{amount_b} $e{comment} $e{tags}";
+}
 
 sub add_rate {
 }
